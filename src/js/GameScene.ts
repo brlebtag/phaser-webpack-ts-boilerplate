@@ -2,51 +2,52 @@ import Inputs from "./Inputs";
 import Mario from "./Mario";
 
 export default class GameScene extends Phaser.Scene {
-  private _inputs: Inputs;
+    private _inputs: Inputs;
 
-  constructor() {
-    super({
-      key: "game",
-      active: false,
-      visible: false,
-    });
-  }
+    constructor() {
+        super({
+            key: "game",
+            active: false,
+            visible: false,
+        });
+    }
 
-  public create() {
-    const tilemap = this.make.tilemap({
-      key: "tilemap",
-    });
-    const tileset = tilemap.addTilesetImage("tiles");
-    const layer = tilemap.createLayer(0, tileset, 0, 0);
+    public create() {
+        const tilemap = this.make.tilemap({
+            key: "tilemap",
+        });
 
-    this._inputs = new Inputs(this);
+        const tileset = tilemap.addTilesetImage("tiles");
+        const layer = tilemap.createLayer(0, tileset, 0, 0);
 
-    const mario = new Mario(this, 32, 192);
-    const { widthInPixels, heightInPixels } = tilemap;
+        this._inputs = new Inputs(this);
 
-    layer.forEachTile(function (tile: Phaser.Tilemaps.Tile) {
-      switch (tile.index) {
-        case 2:
-        case 6:
-          tile.setCollision(true);
-          break;
+        const mario = new Mario(this, 32, 192);
+        const { widthInPixels, heightInPixels } = tilemap;
 
-        case 9:
-        case 10:
-          tile.setCollision(false, false, true, false, false);
-          break;
-      }
-    }, this);
+        layer.forEachTile((tile: Phaser.Tilemaps.Tile) => {
+            switch (tile.index) {
+                case 2:
+                case 6:
+                    tile.setCollision(true);
+                break;
 
-    this.physics.world.setBounds(0, -64, widthInPixels, heightInPixels + 64);
-    this.physics.world.TILE_BIAS = 8;
-    this.physics.add.collider(mario, layer);
+                case 9:
+                case 10:
+                    tile.setCollision(false, false, true, false, false);
+                break;
+            }
+        }, this);
 
-    this.cameras.main.setBounds(0, 0, widthInPixels, heightInPixels);
-    this.cameras.main.startFollow(mario, true);
-  }
+        this.physics.world.setBounds(0, -64, widthInPixels, heightInPixels + 64);
+        this.physics.world.TILE_BIAS = 8;
+        this.physics.add.collider(mario, layer);
 
-  public get inputs() {
-    return this._inputs;
-  }
+        this.cameras.main.setBounds(0, 0, widthInPixels, heightInPixels);
+        this.cameras.main.startFollow(mario, true);
+    }
+
+    public get inputs() {
+        return this._inputs;
+    }
 }
